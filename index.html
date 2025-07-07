@@ -1,0 +1,2454 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Farm Management System</title>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .auth-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .auth-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(255, 71, 87, 0.3);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 5px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .expense-type-group {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .expense-type-options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-option:hover {
+            border-color: #667eea;
+        }
+
+        .radio-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        select, input {
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        select:disabled, input:disabled {
+            background: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .voice-input-group {
+            position: relative;
+        }
+
+        .voice-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-btn:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .voice-btn.recording {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.1); }
+            100% { transform: translateY(-50%) scale(1); }
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .add-new-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .add-new-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .add-new-form {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .add-new-form input {
+            flex: 1;
+        }
+
+        .add-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #52c41a, #389e0d);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(82, 196, 26, 0.3);
+        }
+
+        .settings-section {
+            background: #fff3cd;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .settings-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .edit-btn:hover, .delete-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1001;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .notification.success {
+            background: linear-gradient(45deg, #52c41a, #389e0d);
+        }
+
+        .notification.error {
+            background: linear-gradient(45deg, #ff4d4f, #cf1322);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .add-new-form {
+                flex-direction: column;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .expense-type-options {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            }
+
+           .data-table {
+                min-width: 500px;
+                width: 100%;
+                border-collapse: collapse;
+                }
+
+       @media (max-width: 600px) {
+        .logout-btn {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+        }
+
+        .header-bar {
+            position: relative; 
+        }
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1> Farm Management System</h1>
+<p>Manage your animals, expenses, and profits efficiently</p>
+</div>
+
+<!-- Auth Section (visible when not logged in) -->
+<div class="auth-section" id="authSection">
+<div class="auth-buttons">
+<button class="auth-btn" onclick="showAuthModal('login')">Login</button>
+<button class="auth-btn" onclick="showAuthModal('signup')">Sign Up</button>
+</div>
+</div>
+
+<!-- Logout Button (visible when logged in) -->
+<button class="logout-btn" id="logoutBtn" onclick="logout()" style="display: none;">Logout</button>
+
+<!-- Main Content (visible when logged in) -->
+<div id="mainContent" style="display: none;">
+<div class="nav-tabs">
+<button class="nav-tab active" onclick="showTab('expenses')">Expenses</button>
+<button class="nav-tab" onclick="showTab('profits')">Profits</button>
+<button class="nav-tab" onclick="showTab('records')">Records</button>
+<button class="nav-tab" onclick="showTab('settings')">Settings</button>
+</div>
+
+<!-- Expenses Tab -->
+<div class="tab-content active" id="expenses">
+<form id="expenseForm">
+<div class="form-grid">
+<div class="form-group">
+<label for="expenseAnimal">Animal</label>
+<select id="expenseAnimal" name="expenseAnimal" required>
+<option value="">Select Animal</option>
+</select>
+</div>
+
+<!-- Expense Type Selection -->
+<div class="form-group">
+<label for="expenseFood">Food Type</label>
+<select id="expenseFood" name="expenseFood">
+<option value="">Select Food</option>
+</select>
+</div>
+
+<div class="form-group">
+<label for="otherExpense">Other Expense</label>
+<select id="otherExpense" name="otherExpense">
+<option value="">Select Other Expense</option>
+</select>
+</div>
+
+<div class="form-group">
+<label for="expenseQuantity">Quantity</label>
+<input id="expenseQuantity" name="expenseQuantity" placeholder="Enter quantity" required type="number" min="0.1" max="9999999999.0" step="any"/>
+</div>
+
+<div class="form-group">
+<label for="expenseCost">Cost</label>
+<input id="expenseCost" name="expenseCost" placeholder="Enter cost" required step="0.01" type="number" min="0.1" max="9999999999.0" step="any"/>
+</div>
+
+<div class="form-group">
+<label for="expenseDate">Date</label>
+<input id="expenseDate" name="expenseDate" required type="date"/>
+</div>
+<!-- 🎤 Voice Input Section for Expense -->
+<div class="form-group full-width">
+  <label for="voiceExpense">Voice Input</label>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <button type="button" onclick="startVoiceInput('expense')" class="submit-btn">🎤 Use Voice</button>
+    <span id="transcriptExpense" style="font-size: 0.9em; color: gray;"></span>
+  </div>
+</div>
+
+</div>
+<button class="submit-btn" type="submit">💾 Save Expense</button>
+</form>
+<div class="settings-section">
+    <div class="settings-title">Recent Expenses</div>
+    <div class="table-responsive">
+        <table class="data-table" id="expensesPageTable">
+        <thead>
+            <tr>
+                <th>Animal</th>
+                <th>Food Type</th>
+                <th>Other Expense</th>
+                <th>Quantity</th>
+                <th>Cost</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody id="expensesPageTableBody">
+        </tbody>
+    </table>
+ </div>   
+</div>
+</div>
+
+<!-- Profits Tab -->
+<div class="tab-content" id="profits">
+<form id="profitForm">
+<div class="form-grid">
+<div class="form-group">
+<label for="profitAnimal">Animal</label>
+<select id="profitAnimal" name="profitAnimal" required>
+<option value="">Select Animal</option>
+</select>
+</div>
+<div class="form-group voice-input-group">
+<label for="profitType">Profit Type</label>
+<select id="profitType" name="profitType" required>
+    <option value="">Select Profit Type</option>
+</select>
+</div>
+<div class="form-group voice-input-group">
+<label for="profitQuantity">Quantity</label>
+<input id="profitQuantity" name="profitQuantity" placeholder="Enter quantity" required type="number" min="0.1" max="9999999999.0" step="any"/>
+
+</div>
+<div class="form-group">
+<label for="profitDate">Date</label>
+<input id="profitDate" name="profitDate" required type="date"/>
+</div>
+<!-- 🎤 Voice Input Section for Profit -->
+<div class="form-group full-width">
+  <label for="voiceProfit">Voice Input</label>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <button type="button" onclick="startVoiceInput('profit')" class="submit-btn">🎤 Use Voice</button>
+    <span id="transcriptProfit" style="font-size: 0.9em; color: gray;"></span>
+  </div>
+</div>
+
+
+</div>
+<button class="submit-btn" type="submit">💰 Save Profit</button>
+</form>
+<div class="settings-section">
+    <div class="settings-title">Recent Profits</div>
+   <div class="table-responsive">
+    <table class="data-table" id="profitsPageTable">
+        <thead>
+            <tr>
+                <th>Animal</th>
+                <th>Type</th>
+                <th>Quantity</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody id="profitsPageTableBody">
+        </tbody>
+    </table>
+  </div>  
+</div>
+</div>
+
+<!-- Records Tab -->
+<div class="tab-content" id="records">
+  <div class="settings-section">
+    <div class="settings-title">All Records</div>
+
+<!-- 📊 Merged Summary Table (Expenses + Profits) -->
+<div class="settings-title">Daily Summary (Expenses + Profits)</div>
+
+<!-- 📅 Date Filter for Merged Table -->
+<div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 8px;">
+  <label for="mergedDate">Date:</label>
+  <input type="date" id="mergedDate" onchange="loadMergedRecordsFromPicker()" />
+</div>
+
+<div class="table-responsive">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Animal</th>
+        <th>Food/Expense</th>
+        <th>Profit Type</th>
+        <th>Quantity</th>
+        <th>Cost</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody id="mergedRecordsBody"></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="6" style="text-align: right;"><strong>Total Loss:</strong></td>
+        <td id="mergedTotalExpense">-</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="6" style="text-align: right;"><strong>Total Profit:</strong></td>
+        <td id="mergedTotalProfit">-</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!-- 📋 Expenses Section -->
+<div class="settings-title">Expenses</div>
+
+<div style="margin-bottom: 10px;">
+  <div style="
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+    align-items: flex-end;
+  ">
+    <div style="display: flex; flex-direction: column;">
+      <label for="expensesFromDate">From:</label>
+      <input type="date" id="expensesFromDate" />
+    </div>
+    <div style="display: flex; flex-direction: column;">
+      <label for="expensesToDate">To:</label>
+      <input type="date" id="expensesToDate" />
+    </div>
+    <div style="display: flex;">
+      <button
+        onclick="loadExpensesPage(1)"
+        style="transform: translateY(-18px); line-height: 1;"
+      >
+        🔍
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 📋 Expenses Table -->
+<div class="table-responsive">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Animal</th>
+        <th>Food Type</th>
+        <th>Other Expense</th>
+        <th>Quantity</th>
+        <th>Cost</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody id="recordsExpensesBody"></tbody>
+  </table>
+</div>
+
+<!-- ⏮️ Pagination -->
+<div style="text-align: center; margin-top: 10px;">
+  <button onclick="prevExpensesPage()">⬅️ Prev</button>
+  <span id="expensesPageIndicator">Page 1</span>
+  <button onclick="nextExpensesPage()">Next ➡️</button>
+</div>
+
+    <!-- 📈 Profits Table -->
+<div class="settings-title" style="margin-top: 40px;">Profits</div>
+
+
+<!-- 🧭 Filter box aligned to top-right above table -->
+<div style="margin-bottom: 10px;">
+  <div style="
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-end;
+    align-items: flex-end;  /* ✅ Aligns all to bottom edge */
+  ">
+    <div style="display: flex; flex-direction: column;">
+      <label for="profitsFromDate">From:</label>
+      <input type="date" id="profitsFromDate" />
+    </div>
+    <div style="display: flex; flex-direction: column;">
+      <label for="profitsToDate">To:</label>
+      <input type="date" id="profitsToDate" />
+    </div>
+    <div style="display: flex;">
+     <button onclick="loadProfitsPage(1)" style="transform: translateY(-18px);">🔍</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- 📋 Profits Table -->
+<div class="table-responsive">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Animal</th>
+        <th>Type</th>
+        <th>Quantity</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody id="recordsProfitsBody"></tbody>
+  </table>
+</div>
+
+<!-- ⏮️ Pagination -->
+<div style="text-align: center; margin-top: 10px;">
+  <button onclick="prevProfitsPage()">⬅️ Prev</button>
+  <span id="profitsPageIndicator">Page 1</span>
+  <button onclick="nextProfitsPage()">Next ➡️</button>
+</div>
+  </div>
+</div>
+
+
+
+<!-- Settings Tab -->
+<div class="tab-content" id="settings">
+<div class="add-new-section">
+<div class="add-new-title">Add New Food Type</div>
+<div class="add-new-form">
+<input id="newFood" placeholder="Enter food type" type="text"/>
+<button class="add-btn" onclick="addFood()">Add Food</button>
+</div>
+</div>
+
+<div class="add-new-section">
+<div class="add-new-title">Add New Animal</div>
+<div class="add-new-form">
+<input id="newAnimal" placeholder="Enter animal name" type="text"/>
+<button class="add-btn" onclick="addAnimal()">Add Animal</button>
+</div>
+</div>
+
+
+
+<div class="add-new-section">
+<div class="add-new-title">Add New Expenses</div>
+<div class="add-new-form">
+<input id="newOtherExpense" placeholder="Enter other expenses" type="text"/>
+<button class="add-btn" onclick="addOtherExpenses()">Add Other Expenses</button>
+</div>
+</div>
+
+<div class="add-new-section">
+  <div class="add-new-title">Add New Profit Type</div>
+  <div class="add-new-form">
+    <input id="newProfitType" type="text" placeholder="Enter profit type (e.g., milk)" />
+    <select id="profitTypeAnimalSelect" required>
+        <option value="">-- Select Animal --</option>
+        </select>
+    <button class="add-btn" onclick="addProfitType()">Add Profit Type</button>
+  </div>
+</div>
+
+<div class="settings-section">
+<div class="settings-title">Manage Animals</div>
+ <div class="table-responsive">
+    <table class="data-table" id="animalsTable">
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="animalsTableBody">
+</tbody>
+</table>
+ </div>
+</div>
+
+<div class="settings-section">
+<div class="settings-title">Manage Food Types</div>
+<div class="table-responsive">
+    <table class="data-table" id="foodTable">
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="foodTableBody">
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- ✅ MANAGE PROFIT TYPES TABLE -->
+<div class="settings-section">
+  <div class="settings-title">Manage Profit Types</div>
+  <div class="table-responsive">
+    <table class="data-table" id="profitTypesTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Animals</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="profitTypesTableBody"></tbody>
+  </table>
+  </div>
+</div>
+
+<div class="settings-section">
+<div class="settings-title">Manage Other Expenses</div>
+<div class="table-responsive">
+    <table class="data-table" id="otherExpensesTable">
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="otherExpensesTableBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Auth Modal -->
+<div class="modal" id="authModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeAuthModal()">×</span>
+    <h2 id="authTitle">Login</h2>
+    <form id="authForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input id="username" name="username" required type="text" />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" name="password" required type="password" />
+      </div>
+      <button class="submit-btn" id="authSubmitBtn" type="submit">Login</button>
+    </form>
+  </div>
+</div>
+
+
+<!-- Edit Modal -->
+<div class="modal" id="editModal">
+<div class="modal-content">
+<span class="close" onclick="closeEditModal()">×</span>
+<h2 id="editTitle">Edit Item</h2>
+<form id="editForm">
+<div id="editFormFields"></div>
+<button class="submit-btn" type="submit">Update</button>
+</form>
+</div>
+</div>
+
+<script>
+       
+        // Configuration
+        const API_BASE_URL = 'http://localhost:8080/api';
+
+        // State management
+        let currentUser = null;
+        let animals = [];
+        let foods = [];
+        let expenses = [];
+        let otherExpenses = [];
+        let profits = [];
+        let profitTypes = [];
+        let isRecording = false;
+        let recognition = null;
+        let isLoggedIn = false;
+        
+        // Authentication functions
+        function showAuthModal(type) {
+            const modal = document.getElementById('authModal');
+            const title = document.getElementById('authTitle');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            
+            title.textContent = type === 'login' ? 'Login' : 'Sign Up';
+            submitBtn.textContent = type === 'login' ? 'Login' : 'Sign Up';
+            submitBtn.setAttribute('data-type', type);
+            
+            modal.style.display = 'block';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+            document.getElementById('authForm').reset();
+        }
+
+        async function handleAuth(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const type = document.getElementById('authSubmitBtn').getAttribute('data-type');
+            const username = formData.get('username');
+            const password = formData.get('password');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/${type}`, {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                let result;
+
+                const contentType = response.headers.get("Content-Type") || "";
+                if (contentType.includes("application/json")) {
+                    result = await response.json();
+                } else {
+                    const text = await response.text();
+                    result = { message: text }; // wrap plain text as message
+                }
+
+                if (response.ok) {
+                    localStorage.setItem('token', result.token);
+                    currentUser = result.user;
+                    isLoggedIn = true;
+                    showNotification(type === 'login' ? 'Login successful!' : 'Account created successfully!', 'success');
+                    closeAuthModal();
+                    showMainContent();
+                    loadData();
+                } else {
+                    showNotification(result.message || 'Authentication failed', 'error');
+                }
+
+                } catch (error) {
+                console.error('Auth error:', error);
+                showNotification('Connection error. Please try again.', 'error');
+                }
+
+            }
+
+
+        function showMainContent() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'block';
+            setTodayDate();
+        }
+
+        // Navigation functions
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.nav-tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            if (tabName === 'records') {
+                    loadAllRecords();
+                }
+
+            if (tabName === 'settings') {
+                loadSettingsData();
+            }
+        }
+
+        // Data management functions
+        async function loadData() {
+            try {
+                await Promise.all([
+                    loadAnimals(),
+                    loadFoods(),
+                    loadOtherExpenses(),
+                    loadExpenses(),
+                    loadProfits(),
+                    loadProfitTypes(),
+                ]);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showNotification('Error loading data', 'error');
+            }
+        }
+
+        async function loadAnimals() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/animals`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                animals = await response.json();
+                updateAnimalDropdowns();
+            } catch (error) {
+                console.error('Error loading animals:', error);
+            }
+        }
+
+        async function loadFoods() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/foods`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                foods = await response.json();
+                updateFoodDropdowns();
+            } catch (error) {
+                console.error('Error loading foods:', error);
+            }
+        }
+
+        async function loadOtherExpenses() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/expense`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                otherExpenses = await response.json();
+                updateOtherExpenseDropdowns();
+            } catch (error) {
+                console.error('Error loading other expenses:', error);
+            }
+        }
+
+        async function loadExpenses() {
+            console.log("Loading expenses...");
+            try {
+                const response = await fetch(`${API_BASE_URL}/expenses`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                console.log("📥 API response for expenses:", expenses);
+
+                expenses = await response.json();
+                populateExpensesPageTable(expenses); // ✅ update the table visually
+            } catch (error) {
+                console.error('Error loading expenses:', error);
+            }
+        }
+
+        function populateExpensesPageTable(expenses) {
+            const tbody = document.getElementById("expensesPageTableBody");
+            if (!tbody) return;
+
+            tbody.innerHTML = "";
+
+            expenses
+                .slice() // make a shallow copy
+                .sort((a, b) => new Date(b.date) - new Date(a.date)) // sort newest first
+                .slice(0, 6) // take latest 6
+                .forEach(expense => {
+                    const animal = animals.find(a => a.id === expense.animal_id);
+                    const food = foods.find(f => f.id === expense.food_id);
+                    const otherExpense = otherExpenses.find(o => o.id === expense.other_expense_id);
+
+                    console.log("Expense row:", {
+                id: expense.id,
+                animalMatch: animals.find(a => a.id === expense.animal_id),
+                foodMatch: foods.find(f => f.id === expense.food_id),
+                otherMatch: otherExpenses.find(o => o.id === expense.other_expense_id),
+            });
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${animal?.name || '-'}</td>
+                            <td>${food?.name || '-'}</td>
+                            <td>${otherExpense?.name || '-'}</td>
+                            <td>${expense.quantity}</td>
+                            <td>${expense.cost}</td>
+                            <td>${expense.date}</td>
+                        </tr>
+                    `;
+                });
+        }
+
+
+
+        async function loadProfits() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/profits`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                profits = await response.json();
+                populateProfitsPageTable(profits);
+            } catch (error) {
+                console.error('Error loading profits:', error);
+            }
+        }
+
+         function populateProfitsPageTable(profits) {
+            const tbody = document.getElementById("profitsPageTableBody");
+            if (!tbody) return;
+
+            tbody.innerHTML = "";
+
+            profits
+                .slice() // create a copy
+                .sort((a, b) => new Date(b.date) - new Date(a.date)) // sort newest to oldest
+                .slice(0, 6) // keep only latest 6
+                .forEach(profit => {
+                    const animal = animals.find(a => a.id === profit.animal_id);
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${animal ? animal.name : 'Unknown'}</td>
+                            <td>${profit.profit_type}</td>
+                            <td>${profit.quantity}</td>
+                            <td>${profit.date}</td>
+                        </tr>
+                    `;
+                });
+        }
+
+        function updateAnimalDropdowns() {
+        const dropdowns = ['expenseAnimal', 'profitAnimal'];
+        dropdowns.forEach(id => {
+            const select = document.getElementById(id);
+            select.innerHTML = '<option value="">Select Animal</option>';
+            animals.forEach(animal => {
+                select.innerHTML += `<option value="${animal.id}">${animal.name}</option>`;
+            });
+        });
+    }
+
+    // ✅ FIXED: Populate profitType dropdown when profitAnimal changes
+   const profitAnimalSelect = document.getElementById('profitAnimal');
+   const profitTypeSelect = document.getElementById('profitType');
+
+if (profitAnimalSelect && profitTypeSelect) {
+    profitAnimalSelect.addEventListener('change', function () {
+        const selectedAnimalName = this.options[this.selectedIndex].text.toLowerCase();
+        profitTypeSelect.innerHTML = '<option value="">Select Profit Type</option>';
+
+        const filtered = profitTypes.filter(pt => {
+            if (Array.isArray(pt.animals)) {
+                return pt.animals.includes(selectedAnimalName);
+            } else {
+                return pt.animals === selectedAnimalName;
+            }
+        });
+
+        filtered.forEach(pt => {
+            const option = document.createElement('option');
+            option.value = pt.type;
+            option.textContent = pt.type;
+            profitTypeSelect.appendChild(option);
+        });
+    });
+
+    profitAnimalSelect.dispatchEvent(new Event('change'));
+}
+
+
+
+        function updateFoodDropdowns() {
+            const select = document.getElementById('expenseFood');
+            select.innerHTML = '<option value="">Select Food</option>';
+            foods.forEach(food => {
+                select.innerHTML += `<option value="${food.id}">${food.name}</option>`;
+            });
+        }
+
+        function updateOtherExpenseDropdowns() {
+         const select = document.getElementById('otherExpense');
+            if (select) {
+                    select.innerHTML = '<option value="">Select Other Expense</option>';
+                    otherExpenses.forEach(expense => {
+                    select.innerHTML += `<option value="${expense.id}">${expense.name}</option>`;
+                });
+            }
+        }
+
+        // Add new items functions
+        async function addAnimal() {
+            const name = document.getElementById('newAnimal').value.trim();
+            if (!name) {
+                showNotification('Please enter animal name', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/animals`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ name })
+                });
+
+                if (response.ok) {
+                    showNotification('Animal added successfully!', 'success');
+                    document.getElementById('newAnimal').value = '';
+                    loadAnimals();
+                } else {
+                    showNotification('Failed to add animal', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding animal:', error);
+                showNotification('Connection error', 'error');
+            }
+        }
+            async function addOtherExpenses() {
+                const name = document.getElementById('newOtherExpense').value.trim(); 
+                if (!name) {
+                    showNotification('Please enter other expense name', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/expense`, { 
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({ name })
+                    });
+
+                    if (response.ok) {
+                        showNotification('Other expense added successfully!', 'success');
+                        document.getElementById('newOtherExpense').value = '';
+                        loadOtherExpenses(); // Load other expenses to update dropdown
+                    } else {
+                        showNotification('Failed to add other expense', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error adding other expense:', error);
+                    showNotification('Connection error', 'error');
+                }
+            }
+
+        async function addFood() {
+            const name = document.getElementById('newFood').value.trim();
+            if (!name) {
+                showNotification('Please enter food type', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/foods`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ name })
+                });
+
+                if (response.ok) {
+                    showNotification('Food type added successfully!', 'success');
+                    document.getElementById('newFood').value = '';
+                    loadFoods();
+                } else {
+                    showNotification('Failed to add food type', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding food:', error);
+                showNotification('Connection error', 'error');
+            }
+        }
+
+
+        // Form submission functions
+        async function handleExpenseSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+                const expenseData = {
+                    animal_id: parseInt(formData.get('expenseAnimal')),
+                    quantity: parseFloat(formData.get('expenseQuantity')),
+                    cost: parseFloat(formData.get('expenseCost')),
+                    date: formData.get('expenseDate')
+                };
+
+                const foodId = formData.get('expenseFood');
+                const otherId = formData.get('otherExpense');
+
+                if (foodId) {
+                    expenseData.food_id = parseInt(foodId);
+                    expenseData.other_expense_id = null;
+                } else if (otherId) {
+                    expenseData.food_id = null;
+                    expenseData.other_expense_id = parseInt(otherId);
+                }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/expenses`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(expenseData)
+                });
+
+                if (response.ok) {
+                    showNotification('Expense saved successfully!', 'success');
+                    event.target.reset();
+                    setTodayDate();
+                    loadExpenses();
+                } else {
+                    const errorMsg = await response.text();  // Get the actual error message from backend
+                    console.error('Server Error:', errorMsg);
+                    showNotification('Failed to save expense: ' + errorMsg, 'error');
+                    //showNotification('Failed to save expense', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving expense:', error);
+                showNotification('Connection error', 'error');
+            }
+        }
+
+        async function handleProfitSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            const profitData = {
+                animal_id: parseInt(formData.get('profitAnimal')),
+                profit_type: formData.get('profitType'),
+                quantity: parseFloat(formData.get('profitQuantity')),
+                date: formData.get('profitDate')
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/profits`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(profitData)
+                });
+
+                if (response.ok) {
+                    showNotification('Profit saved successfully!', 'success');
+                    event.target.reset();
+                    setTodayDate();
+                    loadProfits();
+                } else {
+                    showNotification('Failed to save profit', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving profit:', error);
+                showNotification('Connection error', 'error');
+            }
+        }
+
+        // Settings and data management
+        async function loadSettingsData() {
+            await loadData();
+            updateSettingsTables();
+        }
+
+            function updateSettingsTables() {
+        // Update animals table
+        const animalsTableBody = document.getElementById('animalsTableBody');
+        animalsTableBody.innerHTML = '';
+
+        for (let i = 0; i < animals.length; i++) {
+            const animal = animals[i];
+            animalsTableBody.innerHTML += `
+                <tr>
+                    <td>${i + 1}</td> <!-- Sequential number -->
+                    <td>${animal.name}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editItem('animal', ${animal.id}, '${animal.name}')">Edit</button>
+                        <button class="delete-btn" onclick="deleteItem('animal', ${animal.id})">Delete</button>
+                    </td>
+                </tr>
+            `;
+        }
+
+
+                    const foodTableBody = document.getElementById('foodTableBody');
+                        foodTableBody.innerHTML = '';
+                        foods.forEach(food => {
+                            foodTableBody.innerHTML += `
+                                <tr>
+                                    <td>${food.id}</td>
+                                    <td>${food.name}</td>
+                                    <td>
+                                        <button class="edit-btn" onclick="editItem('food', ${food.id}, '${food.name}')">Edit</button>
+                                        <button class="delete-btn" onclick="deleteItem('food', ${food.id})">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+        // ADD THIS: Update other expenses table
+    const otherExpensesTableBody = document.getElementById('otherExpensesTableBody');
+    if (otherExpensesTableBody) {
+        otherExpensesTableBody.innerHTML = '';
+        otherExpenses.forEach(expense => {
+            otherExpensesTableBody.innerHTML += `
+                <tr>
+                    <td>${expense.id}</td>
+                    <td>${expense.name}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editItem('other-expense', ${expense.id}, '${expense.name}')">Edit</button>
+                        <button class="delete-btn" onclick="deleteItem('other-expense', ${expense.id})">Delete</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    const expensesTableBody = document.getElementById('expensesTableBody');
+    expensesTableBody.innerHTML = '';
+    expenses.slice(-10).forEach(expense => {
+        const animal = animals.find(a => a.id === expense.animal_id);
+        const food = foods.find(f => f.id === expense.food_id);
+        // ADD this line to handle other expenses in the table
+        const otherExpense = otherExpenses.find(oe => oe.id === expense.other_expense_id);
+        
+        expensesTableBody.innerHTML += `
+            <tr>
+                <td>${animal ? animal.name : 'Unknown'}</td>
+                <td>${food ? food.name : (otherExpense ? otherExpense.name : 'Unknown')}</td>
+                <td>${expense.quantity}</td>
+                <td>${expense.cost}</td>
+                <td>${expense.date}</td>
+                <td>
+                    <button class="edit-btn" onclick="editExpense(${expense.id})">Edit</button>
+                    <button class="delete-btn" onclick="deleteItem('expense', ${expense.id})">Delete</button>
+                </td>
+            </tr>
+        `;
+    });
+
+             // Update profits table
+    const profitsTableBody = document.getElementById('profitsTableBody');
+    profitsTableBody.innerHTML = '';
+    profits.slice(-10).forEach(profit => {
+        const animal = animals.find(a => a.id === profit.animal_id);
+        profitsTableBody.innerHTML += `
+            <tr>
+                <td>${animal ? animal.name : 'Unknown'}</td>
+                <td>${profit.profit_type}</td>
+                <td>${profit.quantity}</td>
+                <td>${profit.date}</td>
+                <td>
+                    <button class="edit-btn" onclick="editProfit(${profit.id})">Edit</button>
+                    <button class="delete-btn" onclick="deleteItem('profit', ${profit.id})">Delete</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+       // UPDATE your editItem function to handle other-expense type
+function editItem(type, id, name) {
+    const modal = document.getElementById('editModal');
+    const title = document.getElementById('editTitle');
+    const formFields = document.getElementById('editFormFields');
+    
+    let displayType = type;
+    if (type === 'other-expense') {
+        displayType = 'Other Expense';
+    } else {
+        displayType = type.charAt(0).toUpperCase() + type.slice(1);
+    }
+    
+    title.textContent = `Edit ${displayType}`;
+    formFields.innerHTML = `
+        <div class="form-group">
+            <label for="editName">Name</label>
+            <input type="text" id="editName" value="${name}" required>
+        </div>
+        <input type="hidden" id="editType" value="${type}">
+        <input type="hidden" id="editId" value="${id}">
+    `;
+    
+    modal.style.display = 'block';
+}
+
+        function editExpense(id) {
+            const expense = expenses.find(e => e.id === id);
+            if (!expense) return;
+
+            const modal = document.getElementById('editModal');
+            const title = document.getElementById('editTitle');
+            const formFields = document.getElementById('editFormFields');
+            
+            title.textContent = 'Edit Expense';
+            formFields.innerHTML = `
+                <div class="form-group">
+                    <label for="editExpenseAnimal">Animal</label>
+                    <select id="editExpenseAnimal" required>
+                        ${animals.map(animal => 
+                            `<option value="${animal.id}" ${animal.id === expense.animal_id ? 'selected' : ''}>${animal.name}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editExpenseFood">Food</label>
+                    <select id="editExpenseFood" required>
+                        ${foods.map(food => 
+                            `<option value="${food.id}" ${food.id === expense.food_id ? 'selected' : ''}>${food.name}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editExpenseQuantity">Quantity</label>
+                    <input type="number" id="editExpenseQuantity" value="${expense.quantity}" required>
+                </div>
+                <div class="form-group">
+                    <label for="editExpenseCost">Cost</label>
+                    <input type="number" step="0.01" id="editExpenseCost" value="${expense.cost}" required>
+                </div>
+                <div class="form-group">
+                    <label for="editExpenseDate">Date</label>
+                    <input type="date" id="editExpenseDate" value="${expense.date}" required>
+                </div>
+                <input type="hidden" id="editType" value="expense">
+                <input type="hidden" id="editId" value="${id}">
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+       async function editProfit(id) {
+    const profit = profits.find(p => p.id === id);
+    if (!profit) return;
+
+    const modal = document.getElementById('editModal');
+    const title = document.getElementById('editTitle');
+    const formFields = document.getElementById('editFormFields');
+
+    title.textContent = 'Edit Profit';
+    formFields.innerHTML = `
+        <div class="form-group">
+            <label for="editProfitAnimal">Animal</label>
+            <select id="editProfitAnimal" required>
+                ${animals.map(animal =>
+                    `<option value="${animal.id}" ${animal.id === profit.animal_id ? 'selected' : ''}>${animal.name}</option>`
+                ).join('')}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="editProfitType">Profit Type</label>
+            <select id="editProfitType" required></select>
+        </div>
+        <div class="form-group">
+            <label for="editProfitQuantity">Quantity</label>
+            <input type="number" id="editProfitQuantity" value="${profit.quantity}" required>
+        </div>
+        <div class="form-group">
+            <label for="editProfitDate">Date</label>
+            <input type="date" id="editProfitDate" value="${profit.date}" required>
+        </div>
+        <input type="hidden" id="editType" value="profit">
+        <input type="hidden" id="editId" value="${id}">
+    `;
+
+    modal.style.display = 'block';
+
+    // ✅ Fetch profit types and populate the dropdown
+    const typeSelect = document.getElementById('editProfitType');
+    try {
+        const res = await fetch('/api/profit-types');
+        const types = await res.json();
+
+       const selectedAnimal = animals.find(a => a.id === profit.animal_id)?.name;
+        const options = types
+            .filter(pt => pt.animals === selectedAnimal) // Match animal name!
+            .map(pt => 
+                `<option value="${pt.type}" ${pt.type === profit.profit_type ? 'selected' : ''}>${pt.type}</option>`
+            ).join('');
+
+        typeSelect.innerHTML = options || '<option disabled>No profit types</option>';
+    } catch (err) {
+        console.error('Failed to load profit types:', err);
+        typeSelect.innerHTML = '<option disabled>Error loading profit types</option>';
+    }
+}
+
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('editForm').reset();
+        }
+
+       // UPDATE your handleEditSubmit function to handle other-expense type
+async function handleEditSubmit(event) {
+    event.preventDefault();
+    const type = document.getElementById('editType').value;
+    const id = document.getElementById('editId').value;
+
+    let updateData = {};
+    let endpoint = '';
+
+    if (type === 'animal' || type === 'food') {
+        updateData = { name: document.getElementById('editName').value };
+        endpoint = `${API_BASE_URL}/${type}s/${id}`;
+    } else if (type === 'other-expense') { // ADD this condition
+        updateData = { name: document.getElementById('editName').value };
+        endpoint = `${API_BASE_URL}/expense/${id}`;
+    } else if (type === 'expense') {
+        updateData = {
+            animal_id: parseInt(document.getElementById('editExpenseAnimal').value),
+            food_id: parseInt(document.getElementById('editExpenseFood').value),
+            quantity: parseFloat(document.getElementById('editExpenseQuantity').value),
+            cost: parseFloat(document.getElementById('editExpenseCost').value),
+            date: document.getElementById('editExpenseDate').value
+        };
+        endpoint = `${API_BASE_URL}/expenses/${id}`;
+    } else if (type === 'profit') {
+        updateData = {
+            animal_id: parseInt(document.getElementById('editProfitAnimal').value),
+            profit_type: document.getElementById('editProfitType').value,
+            quantity: parseFloat(document.getElementById('editProfitQuantity').value),
+            date: document.getElementById('editProfitDate').value
+        };
+        endpoint = `${API_BASE_URL}/profits/${id}`;
+    }
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(updateData)
+        });
+
+        if (response.ok) {
+            showNotification('Updated successfully!', 'success');
+            closeEditModal();
+            loadSettingsData();
+            loadData();
+        } else {
+            showNotification('Failed to update', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating:', error);
+        showNotification('Connection error', 'error');
+    }
+}
+
+       
+// UPDATE your deleteItem function to handle other-expense type
+async function deleteItem(type, id) {
+    let displayType = type;
+    if (type === 'other-expense') {
+        displayType = 'other expense';
+    }
+    
+    if (!confirm(`Are you sure you want to delete this ${displayType}?`)) return;
+
+    try {
+        let endpoint = '';
+        if (type === 'other-expense') { // ADD this condition
+            endpoint = `${API_BASE_URL}/expense/${id}`;
+        } else {
+            endpoint = `${API_BASE_URL}/${type}s/${id}`;
+        }
+        
+        const response = await fetch(endpoint, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (response.ok) {
+            showNotification('Deleted successfully!', 'success');
+            loadSettingsData();
+            loadData();
+        } else {
+            showNotification('Failed to delete', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting:', error);
+        showNotification('Connection error', 'error');
+    }
+}
+
+        // Utility functions
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('expenseDate').value = today;
+            document.getElementById('profitDate').value = today;
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Check if user is already logged in
+            const token = localStorage.getItem('token');
+            if (token) {
+                showMainContent();
+                loadData();
+            }
+
+            // Form event listeners
+            document.getElementById('authForm').addEventListener('submit', handleAuth);
+            document.getElementById('expenseForm').addEventListener('submit', handleExpenseSubmit);
+            document.getElementById('profitForm').addEventListener('submit', handleProfitSubmit);
+            document.getElementById('editForm').addEventListener('submit', handleEditSubmit);
+
+            // Modal event listeners
+            window.onclick = function(event) {
+                const authModal = document.getElementById('authModal');
+                const editModal = document.getElementById('editModal');
+                
+                if (event.target === authModal) {
+                    closeAuthModal();
+                }
+                if (event.target === editModal) {
+                    closeEditModal();
+                }
+            };
+
+            // Set today's date by default
+            setTodayDate();
+        });
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            currentUser = null;
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+            showNotification('Logged out successfully', 'success');
+        }
+
+        document.getElementById('expenseFood').addEventListener('change', function () {
+            const other = document.getElementById('otherExpense');
+            if (this.value) {
+                other.disabled = true;
+                other.value = '';
+            } else {
+                other.disabled = false;
+            }
+        });
+
+        document.getElementById('otherExpense').addEventListener('change', function () {
+            const food = document.getElementById('expenseFood');
+            if (this.value) {
+                food.disabled = true;
+                food.value = '';
+            } else {
+                food.disabled = false;
+            }
+        });
+
+
+
+        // Show logout button when logged in
+        function showMainContent() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'block';
+            setTodayDate();
+        }
+
+        const foodRadio = document.getElementById('foodTypeRadio');
+        const otherRadio = document.getElementById('otherExpenseRadio');
+        const foodDropdown = document.getElementById('expenseFood');
+        const otherDropdown = document.getElementById('otherExpense');
+
+
+
+
+// Add new profit type function
+async function addProfitType() {
+    const name = document.getElementById('newProfitType').value.trim();
+    const selectedAnimal = document.getElementById('profitTypeAnimalSelect').value;
+
+    if (!name || !selectedAnimal) {
+        showNotification('Please enter a profit type and select an animal.', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/profit-types`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ type: name, animals: selectedAnimal })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Response error text:', errorText);
+            throw new Error('Failed to add profit type');
+        }
+
+        document.getElementById('newProfitType').value = '';
+        document.getElementById('profitTypeAnimalSelect').value = '';
+
+        await loadProfitTypes();
+        populateProfitTypesTable(profitTypes); // optional
+        updateProfitTypeDropdownForSelectedAnimal(); // ✅ refresh dropdown with new type
+        showNotification('Profit type added successfully', 'success');
+    } catch (error) {
+        console.error('Error adding profit type:', error);
+        showNotification('Failed to add profit type', 'error');
+    }
+}
+
+// Reset profit type form
+function resetProfitTypeForm() {
+    const form = document.getElementById('profitTypeForm');
+    if (form) {
+        form.reset();
+    }
+    
+    // Reset individual fields
+    const profitTypeId = document.getElementById('profitTypeId');
+    if (profitTypeId) profitTypeId.value = '';
+    
+    const submitBtn = document.getElementById('submitProfitTypeBtn');
+    if (submitBtn) submitBtn.textContent = 'Add Profit Type';
+}
+
+// Edit profit type
+async function editProfitType(id) {
+    const pt = profitTypes.find(p => p.id === id);
+    if (!pt) return;
+
+    const profitTypeId = document.getElementById('profitTypeId');
+    const profitTypeName = document.getElementById('newProfitType');
+    const select = document.getElementById('profitTypeAnimalSelect');
+    
+    if (profitTypeId) profitTypeId.value = pt.id;
+    if (profitTypeName) profitTypeName.value = pt.type;
+    
+    if (select) {
+        // Set the selected animal
+        select.value = pt.animals;
+    }
+
+    const submitBtn = document.getElementById('submitProfitTypeBtn');
+    if (submitBtn) submitBtn.textContent = 'Update Profit Type';
+}
+
+// Delete profit type
+async function deleteProfitType(id) {
+    if (!confirm('Are you sure you want to delete this profit type?')) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/profit-types/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (response.ok) {
+            showNotification('Profit type deleted successfully!', 'success');
+            await loadProfitTypes(); // Reload data
+            populateProfitTypesTable(profitTypes); // Update table display
+        } else {
+            const errorText = await response.text();
+            console.error('Delete error:', errorText);
+            showNotification('Failed to delete profit type', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting profit type:', error);
+        showNotification('Network error occurred', 'error');
+    }
+}
+
+// Load profit types from server
+async function loadProfitTypes() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/profit-types`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+
+        if (response.ok) {
+            profitTypes = await response.json();
+            console.log('Loaded profit types:', profitTypes); // Debug logging
+        } else {
+            console.error('Failed to load profit types:', response.status);
+            profitTypes = [];
+        }
+    } catch (error) {
+        console.error('Error loading profit types:', error);
+        profitTypes = [];
+    }
+}
+
+// Render profit types in settings table
+function populateProfitTypesTable(profitTypesData = profitTypes) {
+    const tbody = document.getElementById('profitTypesTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    profitTypesData.forEach((pt, index) => {
+        // Map animal IDs to animal names
+        let animalsDisplay = '';
+
+        if (Array.isArray(pt.animals)) {
+            animalsDisplay = pt.animals.map(aid => {
+                const match = animals.find(a => a.id == aid);
+                return match ? match.name : aid; // fallback to ID if name not found
+            }).join(', ');
+        } else {
+            const match = animals.find(a => a.id == pt.animals);
+            animalsDisplay = match ? match.name : pt.animals;
+        }
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${pt.type || ''}</td>
+                <td>${animalsDisplay}</td>
+                <td>
+                    <button class="edit-btn" onclick="editProfitType(${pt.id})">Edit</button>
+                    <button class="delete-btn" onclick="deleteProfitType(${pt.id})">Delete</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function wireProfitAnimalToProfitTypes() {
+        const profitAnimalSelect = document.getElementById('profitAnimal');
+        const profitTypeSelect = document.getElementById('profitType');
+        if (!profitAnimalSelect || !profitTypeSelect) return;
+
+        profitAnimalSelect.addEventListener('change', () => {
+            const selectedAnimalName = profitAnimalSelect.options[profitAnimalSelect.selectedIndex].text.trim().toLowerCase();
+
+            profitTypeSelect.innerHTML = '<option value="">Select Profit Type</option>';
+
+            const filtered = profitTypes.filter(pt => {
+                if (!pt.animals) return false;
+
+                // Normalize all values to lowercase for comparison
+                if (Array.isArray(pt.animals)) {
+                    return pt.animals.some(a => a.toLowerCase?.() === selectedAnimalName);
+                } else {
+                    return pt.animals.toLowerCase() === selectedAnimalName;
+                }
+            });
+
+            filtered.forEach(pt => {
+                const option = document.createElement('option');
+                option.value = pt.type;
+                option.textContent = pt.type;
+                profitTypeSelect.appendChild(option);
+            });
+
+            profitTypeSelect.style.display = 'block';
+            profitTypeSelect.style.opacity = '1';
+        });
+
+        profitAnimalSelect.dispatchEvent(new Event('change'));
+    }
+
+
+    function updateProfitTypeDropdownForSelectedAnimal() {
+    const animalSelect = document.getElementById('profitAnimal');
+    const profitTypeSelect = document.getElementById('profitType');
+    if (!animalSelect || !profitTypeSelect) return;
+
+    const selectedAnimalId = parseInt(animalSelect.value);
+    const selectedAnimalName = animals.find(a => a.id === selectedAnimalId)?.name?.toLowerCase();
+    if (!selectedAnimalName) return;
+
+    profitTypeSelect.innerHTML = '<option value="">Select Profit Type</option>';
+
+    profitTypes
+        .filter(pt => {
+            if (!pt.animals) return false;
+            return pt.animals.toLowerCase() === selectedAnimalName || parseInt(pt.animals) === selectedAnimalId;
+        })
+        .forEach(pt => {
+            const opt = document.createElement('option');
+            opt.value = pt.type;
+            opt.textContent = pt.type;
+            profitTypeSelect.appendChild(opt);
+        });
+}
+
+
+// Initialize when DOM is loaded
+ window.addEventListener('DOMContentLoaded', async () => {
+    await loadAnimals();
+    await loadProfitTypes();
+
+    document.getElementById('profitAnimal')?.addEventListener('change', updateProfitTypeDropdownForSelectedAnimal);
+    updateProfitTypeDropdownForSelectedAnimal(); // Initial fill if animal already selected
+});
+function populateAnimalSelect() {
+    const select = document.getElementById('profitTypeAnimalSelect');
+    if (select && animals.length > 0) {
+        select.innerHTML = '<option value="">-- Select Animal --</option>';
+        animals.forEach(animal => {
+            select.innerHTML += `<option value="${animal.id}">${animal.name}</option>`;
+        });
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadAnimals();                        
+    await loadProfitTypes();
+    populateAnimalSelect();                      
+    populateProfitTypesTable(profitTypes);
+    wireProfitAnimalToProfitTypes();
+});
+
+
+async function startVoiceInput(page) {
+        if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+            alert("Speech recognition not supported");
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.start();
+        const transcriptEl = document.getElementById(page === 'expense' ? 'transcriptExpense' : 'transcriptProfit');
+        if (transcriptEl) transcriptEl.textContent = "🎙 Listening...";
+
+        recognition.onresult = async (event) => {
+            const speechText = event.results[0][0].transcript;
+            console.log("🎤 Voice input:", speechText);
+            if (transcriptEl) transcriptEl.textContent = speechText;
+
+            try {
+                const endpoint =
+                    page === 'expense' ? '/voice/expenses' : '/voice/profit';
+
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ prompt: speechText })
+                });
+
+                const data = await response.json();
+                console.log("Gemini structured response:", data);
+                autoFillFormFromVoice(data, page);
+            } catch (error) {
+                console.error("Voice processing failed:", error);
+                alert("Failed to process voice input.");
+            }
+
+        };
+
+        recognition.onerror = (e) => {
+            console.error("Speech recognition error:", e);
+            if (transcriptEl) transcriptEl.textContent = "❌ Could not recognize speech";
+        };
+    }
+
+    // ✅ Fills the form based on Gemini response
+    function autoFillFormFromVoice(data, page) {
+
+        if (page === "expense" && data.type !== "expense") {
+            alert("Please speak an expense-related sentence.");
+            return;
+        }
+        if (page === "profit" && data.type !== "profit") {
+            alert("Please speak a profit-related sentence.");
+            return;
+        }
+
+        if (page === "expense" && data.type === "expense") {
+            const animal = animals.find(a => a.name.toLowerCase() === data.animal.toLowerCase());
+            const food = foods.find(f => f.name.toLowerCase() === (data.foodType || '').toLowerCase());
+            const other = otherExpenses.find(o => o.name.toLowerCase() === (data.otherExpense || '').toLowerCase());
+
+            if (animal) document.getElementById("expenseAnimal").value = animal.id;
+            if (food) {
+                document.getElementById("expenseFood").value = food.id;
+                document.getElementById("otherExpense").value = "";
+                document.getElementById("otherExpense").disabled = true;
+            } else if (other) {
+                document.getElementById("otherExpense").value = other.id;
+                document.getElementById("expenseFood").value = "";
+                document.getElementById("expenseFood").disabled = true;
+            }
+
+            if (data.quantity) document.getElementById("expenseQuantity").value = data.quantity;
+            if (data.cost) document.getElementById("expenseCost").value = data.cost;
+        }
+
+        if (page === "profit" && data.type === "profit") {
+            const animal = animals.find(a => a.name.toLowerCase() === data.animal.toLowerCase());
+            if (animal) {
+                document.getElementById("profitAnimal").value = animal.id;
+                updateProfitTypeDropdownForSelectedAnimal();
+            }
+
+            setTimeout(() => {
+                const type = (data.profitType || "").toLowerCase();
+                const profitTypeEl = document.getElementById("profitType");
+                for (let option of profitTypeEl.options) {
+                    if (option.value.toLowerCase() === type) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+
+                if (data.quantity) document.getElementById("profitQuantity").value = data.quantity;
+            }, 300); // Give dropdown time to populate
+        }
+    }
+
+const recordsPerPage = 20;
+let expensesPage = 1;
+let profitsPage = 1;
+let profitsLastFetchedCount = 0;
+let expensesLastFetchedCount = 0;
+
+// Load both tables
+function loadAllRecords() {
+  loadMergedRecordsFromPicker(); 
+  loadExpensesPage(expensesPage);
+  loadProfitsPage(profitsPage);
+}
+
+// Expenses pagination
+async function loadExpensesPage(page = 1) {
+  const offset = (page - 1) * recordsPerPage;
+  const token = localStorage.getItem("token");
+
+  // Get date filter values
+  const from = document.getElementById("expensesFromDate")?.value;
+  const to = document.getElementById("expensesToDate")?.value;
+
+  // Build URL conditionally based on filters
+  let url = `${API_BASE_URL}/expenses/history?limit=${recordsPerPage}&offset=${offset}`;
+  if (from && from.trim() !== "") url += `&from=${from}`;
+  if (to && to.trim() !== "") url += `&to=${to}`;
+
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const data = await res.json();
+    console.log(" Expense API response:", data);
+
+    const tbody = document.getElementById("recordsExpensesBody");
+    tbody.innerHTML = "";
+
+    expensesLastFetchedCount = data.length;
+
+    if (!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No expense records</td></tr>`;
+      return;
+    }
+
+    data.forEach(e => {
+      const animal = animals.find(a => a.id === e.animal_id);
+      const food = foods.find(f => f.id === e.food_id);
+      const other = otherExpenses.find(o => o.id === e.other_expense_id);
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${animal?.name || '-'}</td>
+          <td>${food?.name || '-'}</td>
+          <td>${other?.name || '-'}</td>
+          <td>${e.quantity}</td>
+          <td>${e.cost}</td>
+          <td>${e.date}</td>
+        </tr>`;
+    });
+
+    expensesPage = page;
+    document.getElementById("expensesPageIndicator").textContent = `Page ${expensesPage}`;
+  } catch (err) {
+    console.error("❌ Error loading expenses:", err);
+  }
+}
+
+function prevExpensesPage() {
+  if (expensesPage > 1) {
+    expensesPage--;
+    loadExpensesPage(expensesPage);
+  }
+}
+
+function nextExpensesPage() {
+  if (expensesLastFetchedCount === recordsPerPage) {
+    expensesPage++;
+    loadExpensesPage(expensesPage);
+  } else {
+    alert("You're already on the last page of expenses.");
+  }
+}
+// Profits pagination
+async function loadProfitsPage(page = 1) {
+  const offset = (page - 1) * recordsPerPage;
+  const token = localStorage.getItem("token");
+
+  //Get date filter values from input fields
+  const from = document.getElementById("profitsFromDate")?.value;
+  const to = document.getElementById("profitsToDate")?.value;
+
+  //Build the URL with optional from/to
+  let url = `${API_BASE_URL}/profits/history?limit=${recordsPerPage}&offset=${offset}`;
+  if (from && from.trim() !== "") url += `&from=${from}`;
+  if (to && to.trim() !== "") url += `&to=${to}`;
+
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const data = await res.json();
+
+    profitsLastFetchedCount = data.length;
+
+    const tbody = document.getElementById("recordsProfitsBody");
+    if (!tbody) {
+      console.error("❌ ERROR: 'recordsProfitsBody' not found in DOM");
+      return;
+    }
+
+    tbody.innerHTML = "";
+
+    if (!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No profit records</td></tr>`;
+      return;
+    }
+
+    data.forEach(p => {
+      const animal = animals.find(a => a.id === p.animal_id);
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${animal?.name || '-'}</td>
+          <td>${p.profit_type}</td>
+          <td>${p.quantity}</td>
+          <td>${p.date}</td>
+        </tr>`;
+    });
+
+    profitsPage = page;
+    document.getElementById("profitsPageIndicator").textContent = `Page ${profitsPage}`;
+  } catch (err) {
+    console.error("❌ Error loading profits:", err);
+  }
+}
+
+function prevProfitsPage() {
+  if (profitsPage > 1) {
+    profitsPage--;
+    loadProfitsPage(profitsPage);
+  }
+}
+
+function nextProfitsPage() {
+  if (profitsLastFetchedCount === recordsPerPage) {
+    profitsPage++;
+    loadProfitsPage(profitsPage);
+  } else {
+    alert("You're already on the last page.");
+  }
+}
+
+async function loadMergedRecords(date = new Date().toISOString().split('T')[0]) {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/records/merged?date=${date}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const result = await res.json();
+    console.log("🔍 Merged API Response:", result);
+
+
+    const tbody = document.getElementById("mergedRecordsBody");
+    tbody.innerHTML = "";
+
+    if (!Array.isArray(result.records)) {
+      console.error("⚠️ Invalid response format:", result);
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No data available</td></tr>`;
+      return;
+    }
+
+    result.records.forEach(r => {
+        const category = r.food_type || r.other_expense || '-';
+      tbody.innerHTML += `
+        <tr>
+          <td>${r.type}</td>
+          <td>${r.animal}</td>
+          <td>${category}</td>
+          <td>${r.profit_type || '-'}</td>
+          <td>${r.type === "expense" ? r.quantity : '-'}</td>
+          <td>${r.type === "profit" ? r.quantity : r.cost}</td>
+          <td>${r.date}</td>
+        </tr>
+      `;
+    });
+
+    document.getElementById("mergedTotalExpense").textContent = `-${result.totalExpense?.toFixed(2) || "0.00"}`;
+    document.getElementById("mergedTotalProfit").textContent = result.totalProfit?.toFixed(2) || "0.00";
+
+  } catch (err) {
+    console.error("❌ Failed to load merged records:", err);
+    const tbody = document.getElementById("mergedRecordsBody");
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Error loading records</td></tr>`;
+    }
+  }
+}
+
+function loadMergedRecordsFromPicker() {
+  const dateInput = document.getElementById("mergedDate").value;
+  const date = dateInput || new Date().toISOString().split('T')[0]; // fallback to today
+  loadMergedRecords(date);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById("mergedDate").value = today;
+
+  loadAllRecords(); // ✅ this uses the today's date for merged records
+});
+
+    </script>
+</body>
+</html>
+
+
